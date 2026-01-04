@@ -27,7 +27,8 @@ int main(){
             default:
                 printf("Wybierz z 0-6!");
             case 1:
-
+                printf("REJESTRACJA");
+                break;
             case 2:
 
             case 3:
