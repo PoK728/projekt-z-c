@@ -16,12 +16,13 @@ struct Dinozaur{
 
 int main(){
     int zmienna;
-    char *gat = (char*)malloc(sizeof(char));
-    int *diet = (int*)malloc(sizeof(int));
-    float *m = (float*)malloc(sizeof(float));
-    int *zag = (int*)malloc(sizeof(int));
-    int *tem = (int*)malloc(sizeof(int));
-    int *sb = (int*)malloc(sizeof(int));
+    struct Dinozaur nowy;
+    // char *gat = (char*)malloc(sizeof(char));
+    // int *diet = (int*)malloc(sizeof(int));
+    // float *m = (float*)malloc(sizeof(float));
+    // int *zag = (int*)malloc(sizeof(int));
+    // int *tem = (int*)malloc(sizeof(int));
+    // int *sb = (int*)malloc(sizeof(int));
     while(1){
         printf("==Witaj w systemie zarzadzania parkiem dinozaurow==\n ");
         printf("Wybierz opcje: \n");
@@ -40,7 +41,7 @@ int main(){
                 printf("==REJESTRACJA==\n");
                 while(1){
                 printf("Podaj nazwe gatunku: \n");
-                fgets("%s",&gat);
+                fgets("%s",&nowy.gatunek,100);
                 int wybordiety;
                 printf("Wybierz diete: \n");
                 printf("1. miesozerny: \n");
@@ -52,14 +53,73 @@ int main(){
                         printf("Wybierz z 1-3!\n");
                     case 1:
                         printf("Wybrano miesozerny!\n");
+                        wybordiety=nowy.dieta;
                     case 2:
                         printf("Wybrano roslinozerny!\n");
+                        wybordiety=nowy.dieta;
                     case 3:
-                        printf("Wybrano wszystkozerny!\n");                        
-                }
-                diet = wybordiety;
+                        printf("Wybrano wszystkozerny!\n");  
+                        wybordiety=nowy.dieta;                      
+                };
                 printf("Wprowadz mase: \n");
-                scanf("%f",&m);
+                scanf("%2.f",&nowy.masa);
+                printf("Wprowadz numer zagrody: \n");
+                scanf("%d",&nowy.zagroda);
+                int wybor_temp;
+                printf("Wybierz temperament obiektu:\n");
+                printf("1. spokojny\n");
+                printf("2. agresywny\n");
+                printf("3. impulsywny\n");
+                printf("4. nieprzewidywalny\n");
+                printf("5. przewidywalny\n");
+                scanf("%d",&wybor_temp);
+                switch(wybor_temp){
+                    default:
+                        printf("Wybierz z 1-5!");
+                    case 1:
+                        printf("Wybrano spokojny!");
+                        nowy.temperament = wybor_temp;
+                    case 2:
+                        printf("Wybrano agresywny!");
+                        nowy.temperament = wybor_temp;
+                    case 3:
+                        printf("Wybrano impulsywny!");
+                        nowy.temperament = wybor_temp;
+                }
+
+
+
+
+
+
+
+                printf("Wprowadz status bezpieczenstwa: \n");
+                printf("1. bezpieczny\n");
+                printf("2. pod obserwacja\n");
+                printf("3. zagrozenie\n");
+                printf("4. ucieczka\n");
+                printf("5. awaryjna kwarantanna\n");
+                int wybor_status;
+                switch(wybor_status){
+                    default:
+                        printf("Wybierz z 1-5!\n");
+                    case 1:
+                        printf("Wybrano bezpieczny!\n");
+                        wybor_status=nowy.status_bezpieczenstwa;
+                    case 2:
+                        printf("Wybrano pod obserwacja!\n");
+                        wybor_status=nowy.status_bezpieczenstwa;
+                    case 3:
+                        printf("Wybrano zagrozenie!\n");  
+                        wybor_status=nowy.status_bezpieczenstwa;
+                    case 4:
+                        printf("Wybrano ucieczka!");
+                        wybor_status=nowy.status_bezpieczenstwa;
+                    case 5:
+                        printf("Wybrano awaryjna kwarantanna!");
+                        wybor_status=nowy.status_bezpieczenstwa;                      
+                };
+
 
                 }
                 break;
