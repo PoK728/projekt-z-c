@@ -23,12 +23,7 @@ int main(){
             switch(zmienna){
             case 1:
                 while(getchar()!='\n');
-                liczba_dino++;
-                struct Dinozaur *temp = realloc(park,liczba_dino*sizeof(struct Dinozaur));
-                if(&temp != NULL){
-                    park = temp;
-                    dodaj_dinozaura(&park[liczba_dino-1]);
-                }
+                park = dodaj_dinozaura(park);
                 break;
             case 2:
                 while(getchar()!='\n');

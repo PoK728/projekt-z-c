@@ -1,69 +1,129 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "innecosie.h"
-void wyszukaj_po_nazwie(struct Dinozaur *d,int liczba_dino){
+
+void wyszukaj_po_liczbie(struct Dinozaur *glowa,int liczba_dino,int szukana){
     while(getchar()!='\n');
-    printf("%d",liczba_dino);
-    char gat[100];
-    int czy_liczba = 0;
-    printf("==Wybrano wyszukiwanie po gatunku==\n");
-    printf("Podaj nazwe gatunku lub jej fragment: \n");
-    fgets(gat,sizeof(gat),stdin);
-    gat[strcspn(gat,"\n")]=0;
-    for(int i=0;gat[i]!='\0';i++){
-    if(gat[i]>='0' && gat[i]<='9'){
-        czy_liczba = 1;
+    printf("Podaj szukana wartosc: ");
+    int liczba;
+    float liczba2;
+    if(szukana==3){
+        if(scanf("%f",&liczba2)!=1){
+            printf("podano litere!\n");
+            while(getchar()!='\n');
+            return;
         }
     }
-    if(czy_liczba!=1){
-    printf("==WYNIKI WYSZUKIWANIA==\n");
-    for(int i=0;i<liczba_dino;i++){
-    if(strstr(d[i].gatunek,gat)!=NULL){
-    printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",d[i].gatunek,Diety[d[i].dieta],d[i].masa,d[i].zagroda,Temperamenty[d[i].temperament],Statusy[d[i].status_bezpieczenstwa]);
-    }
     else{
+        if(scanf("%d",&liczba)!=1){
+            printf("Podano litere!\n");
+            while(getchar()!='\n');
+            return;
+        }
+        if(szukana==2 && liczba<=0 || liczba>=5){printf("BLAD W WARTOSCI\n"); return;}
+        if(szukana==5 && liczba<=0 || liczba>=6){printf("BLAD W WARTOSCI\n"); return;}
+        if(szukana==6 && liczba<=0 || liczba>=6){printf("BLAD W WARTOSCI\n"); return;}
+    }
+    int znaleziono = 0;
+    printf("=====WYNIKI WYSZUKIWANIA=====\n");
+    struct Dinozaur *obecny = glowa;
+    switch(szukana){
+        case 2: 
+            
+            if(obecny->dieta == liczba){
+                znaleziono=1;
+            }
+            break;
+        case 3:
+            if(obecny->masa == liczba2){
+                znaleziono=1;
+            }
+            break ;
+        case 4:
+            if(obecny->zagroda == liczba){
+                znaleziono=1;
+            }
+            break;
+        case 5:
+            if(obecny->temperament == liczba){
+                znaleziono=1;
+            }
+            break;
+        case 6:
+            if(obecny->status_bezpieczenstwa==liczba){
+                znaleziono=1 ;
+            }
+            break ;
+    }
+    if(znaleziono==1){
+        printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",obecny->gatunek,Diety[obecny->dieta],obecny->masa,obecny->zagroda,Temperamenty[obecny->temperament],Statusy[obecny->status_bezpieczenstwa]);
+    }
+    if(znaleziono==0){
         printf("Brak wynikow!\n");
-        break;
-        }
-       }    
     }
-    else{
-    printf("Wykryto liczbe!\n");
+    obecny = obecny->nast;
+    int stop;
+    printf("\nNacisnij 0, aby wyjsc\n");
+    while(scanf("%d",&stop)!=1||stop!=0){
+        printf("BLAD! Nacijnij 0, aby wyjsc!\n");
         while(getchar()!='\n');
     }
 }
-void wyszukaj_po_liczbie_dieta(struct Dinozaur *d,int liczba_dino){
+void wyszukaj_po_nazwie(struct Dinozaur *glowa,int liczba_dino){
     while(getchar()!='\n');
-    int liczba;
-    scanf("%d",&liczba);
-    for(int i;i<liczba_dino;i++){
-        if(d[i].dieta = liczba){
-            printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",d[i].gatunek,Diety[d[i].dieta],d[i].masa,d[i].zagroda,Temperamenty[d[i].temperament],Statusy[d[i].status_bezpieczenstwa]);
-        }
+    char gat[50];
+    int znaleziono = 0;
+    struct Dinozaur *obecny = glowa;
+    printf("=====Wybrano wyszukiwanie po gatunku=====\n");
+    printf("Podaj nazwe gatunku: \n");
+    fgets(gat,sizeof(gat),stdin);
+    gat[strcspn(gat,"\n")]=0;
+    if(strstr(obecny->gatunek,gat)!=NULL){
+        znaleziono=1;
+    }
+    printf("=====WYNIKI WYSZUKIWANIA=====\n\n");
+    if(znaleziono==1){
+        printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",obecny->gatunek,Diety[obecny->dieta],obecny->masa,obecny->zagroda,Temperamenty[obecny->temperament],Statusy[obecny->status_bezpieczenstwa]);
+    }
+    if(znaleziono==0){
+        printf("Brak wynikow!\n");
+    }
+    obecny = obecny->nast;
+    int stop;
+    printf("\nNacisnij 0, aby wyjsc\n");
+    while(scanf("%d",&stop)!=1||stop!=0){
+        printf("BLAD! Nacisnij 0, aby wyjsc!\n");
+        while(getchar()!='\n');
     }
 }
-void dodaj_dinozaura(struct Dinozaur *d){
+struct Dinozaur* dodaj_dinozaura(struct Dinozaur *glowa){
+    struct Dinozaur *nowy = (struct Dinozaur*)malloc(sizeof(struct Dinozaur));
     printf("==REJESTRACJA==\n");
     while(1){
-        if(d==NULL){
-            printf("BLAD! NIE WPISANO GATUNKU!"); //jak tego nie bedzie to mi blad wywala :(, to spr czy wprowadzene dane nie sa puste
+        if(nowy==NULL){
+            printf("BLAD ALOKACJI!");
+            return glowa;
         }
         printf("podaj gatunek: \n");
-        if (fgets(d->gatunek, sizeof(d->gatunek), stdin) != NULL ) {
-        d->gatunek[strcspn(d->gatunek, "\n")] = 0; // to usuwa enter, bo fgets go dopisuje, strcspn to usowa dany znak
+        if (fgets(nowy->gatunek, sizeof(nowy->gatunek), stdin) != NULL ) {
+        nowy->gatunek[strcspn(nowy->gatunek, "\n")] = 0; // to usuwa enter, bo fgets go dopisuje, strcspn to usowa dany znak
         int liczba_w_gatunku=0;
-        for(int i=0;d->gatunek[i]!='\0';i++){
-            if(d->gatunek[i]>='0' && d->gatunek[i]<='9'){
+        for(int i=0;nowy->gatunek[i]!='\0';i++){
+            if(nowy->gatunek[i]>='0' && nowy->gatunek[i]<='9'){
                 liczba_w_gatunku=1;
                 break;
             }
+        }
+        for(int i=0;nowy->gatunek[i]!='\0';i++){
+            nowy->gatunek[i]=(char)tolower((unsigned)nowy->gatunek[i]);
         }
         if(liczba_w_gatunku==1){
             printf("BLAD! WYKRYTO LICZBE W NAZWIE!\n");
         }
         else{
-            printf("dodano gatunek %s \n",d->gatunek);
+            printf("dodano gatunek %s \n",nowy->gatunek);
             break;
         }
         }
@@ -73,9 +133,9 @@ void dodaj_dinozaura(struct Dinozaur *d){
     printf("1. miesozerny: \n");
     printf("2. roslinozerny: \n");
     printf("3. wszystkozerny: \n");
-        if(scanf("%d",&d->dieta)==1){
-            if(d->dieta>=1 && d->dieta<=3){
-            switch(d->dieta){
+        if(scanf("%d",&nowy->dieta)==1){
+            if(nowy->dieta>=1 && nowy->dieta<=3){
+            switch(nowy->dieta){
                 case 1:
                     printf("Wybrano miesozerny!\n");
                     break;
@@ -100,9 +160,9 @@ void dodaj_dinozaura(struct Dinozaur *d){
     }
     while(1){
         printf("Podaj mase: \n");
-        if(scanf("%f",&d->masa)==1){
-            if(d->masa>0.00){
-            printf("Dodano mase: %.1f\n",d->masa);
+        if(scanf("%f",&nowy->masa)==1){
+            if(nowy->masa>0.00){
+            printf("Dodano mase: %.1f\n",nowy->masa);
             break;
             }
             else{
@@ -117,17 +177,19 @@ void dodaj_dinozaura(struct Dinozaur *d){
     }
     while(1){
         printf("Podaj numer zagrody: \n");
-        if(scanf("%d",&d->zagroda)==1){
-            if(d->zagroda>0){
-                printf("Dodano do zagrony nr: %d\n",d->zagroda);
+        if(scanf("%d",&nowy->zagroda)==1){
+            if(nowy->zagroda>0){
+                printf("Dodano do zagrony nr: %d\n",nowy->zagroda);
                 break;
             }
             else{
                 printf("Zagronda nie moze byc na minusie!\n");
+                while(getchar()!='\n');
             }
         }
         else{
             printf("BLAD, wykryto litere! Podaj jeszcze raz!\n");
+            while(getchar()!='\n');
         }
     }
     while(1){
@@ -137,9 +199,9 @@ void dodaj_dinozaura(struct Dinozaur *d){
         printf("3. impulsywny\n");
         printf("4. nieprzewidywalny\n");
         printf("5. przewidywalny\n");
-        if(scanf("%d",&d->temperament)==1){
-            if(d->temperament>=1 && d->temperament<=5){
-            switch(d->temperament){
+        if(scanf("%d",&nowy->temperament)==1){
+            if(nowy->temperament>=1 && nowy->temperament<=5){
+            switch(nowy->temperament){
             case 1:
                 printf("Wybrano spokojny!\n");
                 break;
@@ -175,9 +237,9 @@ void dodaj_dinozaura(struct Dinozaur *d){
         printf("3. zagrozenie\n");
         printf("4. ucieczka\n");
         printf("5. awaryjna kwarantanna\n");
-        if(scanf("%d",&d->status_bezpieczenstwa)==1){
-            if(d->status_bezpieczenstwa>=1 && d->status_bezpieczenstwa<=5){
-                switch(d->status_bezpieczenstwa){
+        if(scanf("%d",&nowy->status_bezpieczenstwa)==1){
+            if(nowy->status_bezpieczenstwa>=1 && nowy->status_bezpieczenstwa<=5){
+                switch(nowy->status_bezpieczenstwa){
                     case 1:
                         printf("Wybrano bezpieczny!\n");
                         break;
@@ -206,6 +268,8 @@ void dodaj_dinozaura(struct Dinozaur *d){
         while(getchar()!='\n');
     }
 }
+nowy->nast = glowa;
+return nowy;
 }
 void wyszukaj_dino(struct Dinozaur *di, int liczba_dino){
     printf("==WYSZUKIWANIE==\n");
@@ -223,16 +287,36 @@ void wyszukaj_dino(struct Dinozaur *di, int liczba_dino){
             if(szukaj_opcja>=0 && szukaj_opcja<=6){
                 switch(szukaj_opcja){
                     case 1:
-                        wyszukaj_po_nazwie(struct Dinozaur *di,int liczba_dino);
+                        printf("Wybrano wyszukiwanie po gatunku!\n");
+                        wyszukaj_po_nazwie(di,liczba_dino);
                         break;
                     case 2:
-                        wyszukaj_po_liczbie_dieta(struct Dinozaur *di,int liczba_dino);
+                        printf("Wybrono wyszukiwanie po diecie!\n");
+                        printf("Wybierz: 1 - Miesozerny, 2 - Roslinozerny, 3 - Wszystkozerny\n");
+                        wyszukaj_po_liczbie(di,liczba_dino,szukaj_opcja);
+                        break;
+                    case 3:
+                        printf("Wybrano wyszukiwanie po masie!\n");
+                        wyszukaj_po_liczbie(di,liczba_dino,szukaj_opcja);
+                        break;
+                    case 4:
+                        printf("Wybrano wyszukiwanie po zagrodzie!\n");
+                        wyszukaj_po_liczbie(di,liczba_dino,szukaj_opcja);
+                        break;
+                    case 5:
+                        printf("Wybrano wyszukiwanie po temperamencie!\n");
+                        printf("Wybierz: 1 - Spokojny, 2 - Agresywny, 3 - Impulsywny, 4 - Nieprzewidywalny, 5 - Przewidywalny\n");
+                        wyszukaj_po_liczbie(di,liczba_dino,szukaj_opcja);
+                        break;
+                    case 6:
+                        printf("Wybrano wyszukiwanie po statusie bezpieczeństwa!\n");
+                        printf("Wybierz: 1 - Bezpieczny, 2 - Pod obserwacja, 3 - Zagrozenie, 4 - Ucieczka, 5 - Awaryjna kwarantanna\n");
+                        wyszukaj_po_liczbie(di,liczba_dino,szukaj_opcja);
                         break;
                     case 0:
                         printf("Opuszczono wyszukiwanie!\n");
                         break;
                 }
-                break;
             }
             else{
                 printf("Podaj z zakresu 0-6!\n");
