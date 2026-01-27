@@ -36,7 +36,9 @@ int main(){
             case 5:
 
             case 6:
-
+                while(getchar()!='\n');
+                odczyt_zapis(&park,"dino.txt");
+                break;
             case 0:
                 printf("Do widzenia!\n");
                 return 0;

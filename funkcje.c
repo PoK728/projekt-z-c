@@ -5,6 +5,10 @@
 #include "innecosie.h"
 
 void wyszukaj_po_liczbie(struct Dinozaur *glowa,int liczba_dino,int szukana){
+    if(glowa == NULL){
+        printf("Baza pusta!\n");
+        return;
+    }
     while(getchar()!='\n');
     printf("Podaj szukana wartosc: ");
     int liczba;
@@ -26,44 +30,47 @@ void wyszukaj_po_liczbie(struct Dinozaur *glowa,int liczba_dino,int szukana){
         if(szukana==5 && liczba<=0 || liczba>=6){printf("BLAD W WARTOSCI\n"); return;}
         if(szukana==6 && liczba<=0 || liczba>=6){printf("BLAD W WARTOSCI\n"); return;}
     }
-    int znaleziono = 0;
     printf("=====WYNIKI WYSZUKIWANIA=====\n");
     struct Dinozaur *obecny = glowa;
-    switch(szukana){
+    int znaleziono = 0;
+    while(obecny!=NULL){
+        int pasuje = 0;
+        switch(szukana){
         case 2: 
-            
             if(obecny->dieta == liczba){
-                znaleziono=1;
+                pasuje=1;
             }
             break;
         case 3:
             if(obecny->masa == liczba2){
-                znaleziono=1;
+                pasuje=1;
             }
             break ;
         case 4:
             if(obecny->zagroda == liczba){
-                znaleziono=1;
+                pasuje=1;
             }
             break;
         case 5:
             if(obecny->temperament == liczba){
-                znaleziono=1;
+                pasuje=1;
             }
             break;
         case 6:
             if(obecny->status_bezpieczenstwa==liczba){
-                znaleziono=1 ;
+                pasuje=1 ;
             }
             break ;
-    }
-    if(znaleziono==1){
+        }
+        if(pasuje==1){
         printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",obecny->gatunek,Diety[obecny->dieta],obecny->masa,obecny->zagroda,Temperamenty[obecny->temperament],Statusy[obecny->status_bezpieczenstwa]);
+        znaleziono=1;
+        }
+        obecny = obecny->nast;
     }
     if(znaleziono==0){
         printf("Brak wynikow!\n");
     }
-    obecny = obecny->nast;
     int stop;
     printf("\nNacisnij 0, aby wyjsc\n");
     while(scanf("%d",&stop)!=1||stop!=0){
@@ -72,6 +79,10 @@ void wyszukaj_po_liczbie(struct Dinozaur *glowa,int liczba_dino,int szukana){
     }
 }
 void wyszukaj_po_nazwie(struct Dinozaur *glowa,int liczba_dino){
+    if(glowa == NULL){
+        printf("Baza pusta!\n");
+        return;
+    }
     while(getchar()!='\n');
     char gat[50];
     int znaleziono = 0;
@@ -80,17 +91,23 @@ void wyszukaj_po_nazwie(struct Dinozaur *glowa,int liczba_dino){
     printf("Podaj nazwe gatunku: \n");
     fgets(gat,sizeof(gat),stdin);
     gat[strcspn(gat,"\n")]=0;
-    if(strstr(obecny->gatunek,gat)!=NULL){
-        znaleziono=1;
-    }
+    
     printf("=====WYNIKI WYSZUKIWANIA=====\n\n");
-    if(znaleziono==1){
+    
+    while(obecny!=NULL){
+        int pasuje=0;
+        if(strstr(obecny->gatunek,gat)!=NULL){
+        pasuje=1;
+        }
+        if(pasuje==1){
         printf("Gatunek: %s, dieta: %s, masa: %.1f, zagroda: %d, temperament: %s, status bezpieczenstwa: %s\n",obecny->gatunek,Diety[obecny->dieta],obecny->masa,obecny->zagroda,Temperamenty[obecny->temperament],Statusy[obecny->status_bezpieczenstwa]);
+        znaleziono=1;
+        }
+        obecny = obecny->nast;
     }
     if(znaleziono==0){
         printf("Brak wynikow!\n");
     }
-    obecny = obecny->nast;
     int stop;
     printf("\nNacisnij 0, aby wyjsc\n");
     while(scanf("%d",&stop)!=1||stop!=0){
@@ -326,5 +343,75 @@ void wyszukaj_dino(struct Dinozaur *di, int liczba_dino){
             printf("BLAD! WYKRYTO LITERE!\n");
         }
         break;
+    }
+}
+struct Dinozaur* odczyt_z_pliku(const char* sciezka){
+    FILE* plik = fopen(sciezka,"r");
+    if(plik == NULL){
+        printf("BLAD ODCZYTU Z PLIKU!");
+        return NULL;
+    }
+    struct Dinozaur *glowa = NULL;
+    struct Dinozaur *nowy = NULL;
+    while(!feof(plik)){
+        nowy = (struct Dinozaur*)malloc(sizeof(struct Dinozaur));
+        if(nowy == NULL){
+            break;
+        }
+        if(fscanf(plik,"%s %d %f %d %d %d\n",nowy->gatunek,&nowy->dieta,&nowy->masa,&nowy->zagroda,&nowy->temperament,&nowy->status_bezpieczenstwa)==6){
+            nowy->nast=glowa;
+            glowa = nowy;
+        }
+        else{
+            free(nowy);
+        }
+    }
+    fclose(plik);
+    printf("Dane zostaly wczytane!\n");
+    return glowa;
+}
+void zapis_do_pliku(struct Dinozaur *glowa,const char* sciezka){
+    FILE* plik = fopen(sciezka,"w");
+    if(plik == NULL){
+        printf("BLAD PLIKU!");
+        return;
+    }
+    struct Dinozaur *obecny = glowa;
+    while(obecny != NULL){
+        fprintf(plik,"%s %d %f %d %d %d\n",obecny->gatunek,obecny->dieta,obecny->masa,obecny->zagroda,obecny->temperament,obecny->status_bezpieczenstwa);
+        obecny = obecny->nast;
+    }
+    fclose(plik);
+    printf("Zapisano do pliku\n");
+}
+void odczyt_zapis(struct Dinozaur **glowa, const char* sciezka){
+    printf("=====OBSLOGA PLIKOW=====\n");
+    int zmienna;
+    printf("1. Odczyt z pliku\n");
+    printf("2. Zapis do pliku\n");
+    printf("0. Wyjscie\n");
+    if(scanf("%d",&zmienna)==1){
+        if(zmienna>=0 && zmienna<=2){
+            while(getchar()!='\n');
+            switch(zmienna){
+                case 1:
+                    printf("Wybrano odczyt\n");
+                    *glowa = odczyt_z_pliku(sciezka);
+                    break;
+                case 2:
+                    printf("Wybrano zapis!\n");
+                    zapis_do_pliku(*glowa,sciezka);
+                    break;
+                case 0:
+                    printf("Opuszczono osbloge plikow!\n");
+                    break;
+            }
+        }
+        else{
+            printf("Wybierz z zakresu 0-2!\n");
+        }
+    }
+    else{
+        printf("BLAD, sprobuj jeszcze raz!\n");
     }
 }
