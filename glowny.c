@@ -31,21 +31,28 @@ int main(){
                 wyszukaj_dino(park,liczba_dino);
                 break;
             case 3:
-            
+                while(getchar()!='\n');
+                modyfikacja(park);
+                break;
             case 4:
+                 while(getchar()!='\n');
                 sortowanie(park);
                 break;
             case 5:
-
+                while(getchar()!='\n');
+                park = usuwanie(park);
+                break;
             case 6:
                 while(getchar()!='\n');
                 odczyt_zapis(&park);
                 break;
             case 7:
+                while(getchar()!='\n');
                 wyswietl_wszystkie(park);
                 break;
             case 0:
                 printf("Do widzenia!\n");
+                zwolnij_pamiec(park);
                 return 0;
             
         }
@@ -60,6 +67,6 @@ int main(){
             while (getchar() != '\n');
         }
     }
-    free(park);
+    
     return 0;
 }

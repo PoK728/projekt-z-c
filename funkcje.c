@@ -438,10 +438,10 @@ void odczyt_zapis(struct Dinozaur **glowa){
         printf("BLAD, sprobuj jeszcze raz!\n");
     }
 }
-void wyswietl_wszystkie(struct Dinozaur *glowa){
+struct Dinozaur* wyswietl_wszystkie(struct Dinozaur *glowa){
     if(glowa == NULL){
         printf("Baza pusta!\n");
-        return;
+        return glowa;
     }
     struct Dinozaur *obecny = glowa;
     while(obecny!=NULL){
@@ -481,10 +481,10 @@ void zamien_dane(struct Dinozaur *d1, struct Dinozaur *d2){
     d2->status_bezpieczenstwa = tymc.status_bezpieczenstwa;
     strcpy(d2->id,tymc.id);
 }
-void sortuj_po_nazwie(struct Dinozaur *glowa){
+struct Dinozaur* sortuj_po_nazwie(struct Dinozaur *glowa){
     if(glowa==NULL || !glowa->nast){
         printf("BAZA ZA MALA ZEBY SORTOWAC!!!!\n");
-        return;
+        return glowa;
     }
     struct Dinozaur *p1;
     struct Dinozaur *wp1=NULL;
@@ -503,10 +503,10 @@ void sortuj_po_nazwie(struct Dinozaur *glowa){
     }while(zamieniono);
     printf("Posortowano alfabetycznie po nazwie gatunku!/n");
 }
-void sortuj_po_masie(struct Dinozaur *glowa){
+struct Dinozaur* sortuj_po_masie(struct Dinozaur *glowa){
     if(glowa==NULL || !glowa->nast){
         printf("BAZA ZA MALA ZEBY SORTOWAC!!!!\n");
-        return;
+        return glowa;
     }
     struct Dinozaur *p1;
     struct Dinozaur *wp1=NULL;
@@ -523,14 +523,15 @@ void sortuj_po_masie(struct Dinozaur *glowa){
         }
         wp1=p1;
     }while(zamieniono);
-    printf("Posortowano alfabetycznie po nazwie gatunku!/n");
+    printf("Posortowano alfabetycznie po nazwie gatunku!\n");
 }
-void sortowanie(struct Dinozaur *glowa){
+struct Dinozaur* sortowanie(struct Dinozaur *glowa){
     if(glowa==NULL){
         printf("BLAD!");
-        return;
+        return glowa;
     }
     int wybor;
+    while(1){
     printf("WYBIERZ METODE SORTOWANIA:\n");
     printf("1 - sortowanie po nazwie(alfabetycznie)\n");
     printf("2 - sortowanie po masie(asc)\n");
@@ -546,14 +547,156 @@ void sortowanie(struct Dinozaur *glowa){
                 sortuj_po_masie(glowa);
                 break;
                 case 0:
-                break;
+                return glowa;
             }
         }
         else{
             printf("BLAD WYBIERZ 0-2!\n");
+            while(getchar()!='\n');
         }
     }
     else{
         printf("BLAD, WPISZ LICZBE!\n");
+        while(getchar()!='\n');
+    }
+    }
+}
+struct Dinozaur* modyfikacja(struct Dinozaur *glowa){
+    if(glowa==NULL){
+        printf("BRAK WPISOW DO MODYFIKACJI!\n");
+        return glowa;
+    }
+    char szukana[110];
+    int wybor;
+    printf("Podaj id dinozaura do modyfikacji:");
+    fgets(szukana,sizeof(szukana),stdin);
+    szukana[strcspn(szukana, "\n")]=0;
+    struct Dinozaur *obecny = glowa;
+    while(obecny!=NULL){
+        if(strcmp(obecny->id,szukana)==0){
+            printf("ZNALEZIONO OBIEKT O ID: %s\n",szukana);
+            while(1){
+            printf("===MODYFIKACJA===\n");
+            printf("1 - Masa\n");
+            printf("2 - Zagroda(ZMIANA ID!)\n");
+            printf("3 - Status bezpieczenstwa\n");
+            printf("0 - WYJDZ(BRAK MODYFIKACJI!)\n");
+            printf("Wybierz opcje: ");
+            if(scanf("%d",&wybor)==1){
+                if(wybor>=0 && wybor<=3){
+                    switch(wybor){
+                        case 1:{
+                            float stara_masa = obecny->masa;
+                            printf("\nnowa masa: ");
+                            scanf("%f",&obecny->masa);
+                            if(obecny->masa<0){
+                                printf("MASA NIE MOZE BYC NA MINUSIE!\n");
+                                obecny->masa = stara_masa;
+                                continue;
+                            }
+                            else{
+                            printf("\nnowa masa: %.1f \n",obecny->masa);
+                            }}
+                            break;
+                        case 2:{
+                            int stara_zagroda = obecny->zagroda,duplikat=0;
+                            char stare_id[110];
+                            strcpy(stare_id,obecny->id);
+                            printf("\nnowa zagroda: ");
+                            scanf("%d",&obecny->zagroda);
+                            snprintf(obecny->id,sizeof(obecny->id),"%s_%d",obecny->gatunek,obecny->zagroda);
+                            struct Dinozaur *tymc = glowa;
+                            while(tymc != NULL){
+                                if(tymc != obecny && strcmp(obecny->id,tymc->id)==0){
+                                    duplikat=1;
+                                }
+                                tymc = tymc->nast;
+                            }
+                            if(duplikat==1){
+                                printf("BLAD, TAKI WPIS JUZ ISTNIEJE!!!!\n");
+                                obecny->zagroda = stara_zagroda;
+                                strcpy(obecny->id ,stare_id);
+                            }
+                            else{
+                                printf("MODYFIKACJA PRZEBIEGLA POMYSLNIE! NOWE ID: %s \n",obecny->id);
+                            }
+                            break;}
+                        case 3:{
+                            while(1){
+                            int stary_status = obecny->status_bezpieczenstwa;
+                            printf("\nnowy status bezpieczenstwa: ");
+                            scanf("%d",&obecny->status_bezpieczenstwa);
+                            if(obecny->status_bezpieczenstwa<1 || obecny->status_bezpieczenstwa>5 ){
+                                printf("BLAD, WYBIERZ STATUS Z ZAKRESU 1-5!!\n");
+                                obecny->status_bezpieczenstwa = stary_status;
+                                continue;
+                            }
+                            else{
+                            printf("\nnowy status bezpieczenstwa: %s\n",Statusy[obecny->status_bezpieczenstwa]);
+                            break;
+                            }}}
+                            break;
+                        case 0:
+                            printf("Opuszczono modyfikacje!\n");
+                            return glowa;
+                    }
+                }
+                else{
+                    printf("PODAJ Z ZAKRESU 0-3!\n");
+                    while(getchar()!='\n');
+                }
+            }
+            else{
+                printf("PODAJ LICZBE!\n");
+                while(getchar()!='\n');
+            }
+        }
+    }
+    }
+    return glowa;
+}
+struct Dinozaur* usuwanie(struct Dinozaur *glowa){
+    if(glowa == NULL){
+        printf("BRAK DINOZAUROW DO USUNIECIA!\n");
+        return glowa;
+    }
+    char szukana[110];
+    printf("Podaj id dinozaura do usuniecia:");
+    fgets(szukana,sizeof(szukana),stdin);
+    szukana[strcspn(szukana, "\n")]=0;
+    struct Dinozaur *obecny = glowa;
+    struct Dinozaur *pop = NULL;
+    while(obecny!=NULL){
+        if(strcmp(obecny->id,szukana)==0){
+            if(obecny->status_bezpieczenstwa == 3 || obecny->status_bezpieczenstwa==4){
+                printf("=====UWAGA=====\n");
+                printf("DINOZAUR: %s, MA STATUS %s\n",obecny->id,Statusy[obecny->status_bezpieczenstwa]);
+                printf("NIE MOZNA USUNAC OSOBNIKA KTORY STANOWI ZAGROZENIE LUB JEST PODCZAS UCIECZKI!!\n");
+                printf("POTRZEBNA ZMIANA W STATUSIE!!!!\n");
+                return glowa;
+            }
+            if(pop == NULL){
+                glowa = obecny->nast;
+            }
+            else{
+                pop->nast = obecny->nast;
+            }
+            free(obecny);
+            printf("OSOBNIK: %s ZOSTAL USUNIETY\n",szukana);
+            return glowa;
+        }
+        pop = obecny;
+        obecny = obecny->nast;
+    }
+    printf("Nie znaleziono wpisu!\n");
+    return glowa;
+
+}
+void zwolnij_pamiec(struct Dinozaur *glowa){
+    struct Dinozaur *tymc;
+    while(glowa!=NULL){
+        tymc = glowa;
+        glowa = glowa->nast;
+        free(tymc);
     }
 }
