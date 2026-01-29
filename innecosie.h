@@ -20,6 +20,7 @@ struct Dinozaur{
     int zagroda;
     Temperament temperament;
     Status_bezpieczenstwa status_bezpieczenstwa;
+    char id[110];
     struct Dinozaur *nast;
 }; //zestaw cech obiektu 
 #endif

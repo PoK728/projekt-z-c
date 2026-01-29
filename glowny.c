@@ -17,9 +17,10 @@ int main(){
         printf("4. Sortuj\n");
         printf("5. Usun\n");
         printf("6. Zapisz/Odczytaj z pliku\n");
+        printf("7. Wyswietl wszystkie\n");
         printf("0. Wyjdz\n");
         if(scanf("%d",&zmienna)==1){
-            if(zmienna>=0 && zmienna<=6){
+            if(zmienna>=0 && zmienna<=7){
             switch(zmienna){
             case 1:
                 while(getchar()!='\n');
@@ -32,12 +33,16 @@ int main(){
             case 3:
             
             case 4:
-
+                sortowanie(park);
+                break;
             case 5:
 
             case 6:
                 while(getchar()!='\n');
-                odczyt_zapis(&park,"dino.txt");
+                odczyt_zapis(&park);
+                break;
+            case 7:
+                wyswietl_wszystkie(park);
                 break;
             case 0:
                 printf("Do widzenia!\n");
